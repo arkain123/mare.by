@@ -18,7 +18,7 @@ BANNED_EXTENSIONS = {
     'js', 'vbs', 'ps1', 'msi', 'dll', 'so'
 }
 
-MAX_FILE_SIZE = 200 * 1024 * 1024  # 200 MB
+MAX_FILE_SIZE = 100 * 1024 * 1024  # 100 MB
 
 # Telegram
 TG_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
