@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+
+# Secrets and environment
+.env
+.env.*
+
+# Logs and data
+*.log
+blocked_ip.txt
+escalated_ip.txt
+uploads/
+
+.vscode/
+.idea/
