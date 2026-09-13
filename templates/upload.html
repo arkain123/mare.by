@@ -267,6 +267,57 @@
                 font-size: 1.8rem;
             }
         }
+        .size-error {
+            display: none;
+            margin-top: 20px;
+            padding: 16px 20px;
+            border-radius: 8px;
+            background-color: #f8d7da;
+            border: 1px solid #f5c2c7;
+            color: #842029;
+            font-size: 0.95rem;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.15);
+            animation: shakeError 0.4s ease-in-out;
+        }
+        .size-error.show {
+            display: flex;
+        }
+        .size-error i {
+            font-size: 1.6rem;
+            flex-shrink: 0;
+            color: #dc3545;
+        }
+        .size-error .error-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .size-error .error-title {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .size-error .error-text {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        html.dark .size-error {
+            background-color: #2c1618;
+            border-color: #5a1e22;
+            color: #f5b7bc;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.25);
+        }
+        html.dark .size-error i {
+            color: #ff6b6b;
+        }
+        @keyframes shakeError {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-5px); }
+            80% { transform: translateX(5px); }
+        }
     </style>
 </head>
 <body>
@@ -305,112 +356,153 @@
                     <label for="fileInput" class="btn btn-outline-primary">Select File</label>
                 </div>
             </form>
+            <div class="size-error" id="sizeError">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <div class="error-content">
+                    <div class="error-title">File is too large</div>
+                    <div class="error-text" id="sizeErrorText"></div>
+                </div>
+            </div>
         </div>
 
         {% include 'shared/_features.html' %}
     </div>
 
-    <script>
-        const themeToggle = document.getElementById('themeToggle');
-        const themeIcon = document.getElementById('themeIcon');
+<script>
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
 
-        function updateThemeUI() {
-            const isDark = document.documentElement.classList.contains('dark');
-            const iconSrc = isDark ? "{{ url_for('static', filename='celestia.png') }}" : "{{ url_for('static', filename='luna.png') }}";
-            themeIcon.src = iconSrc;
-        }
+    function updateThemeUI() {
+        const isDark = document.documentElement.classList.contains('dark');
+        const iconSrc = isDark ? "{{ url_for('static', filename='celestia.png') }}" : "{{ url_for('static', filename='luna.png') }}";
+        themeIcon.src = iconSrc;
+    }
 
-        themeToggle.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-            const isDark = document.documentElement.classList.contains('dark');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            updateThemeUI();
-        });
-
+    themeToggle.addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark');
+        const isDark = document.documentElement.classList.contains('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
         updateThemeUI();
+    });
 
-        const form = document.getElementById('uploadForm');
-        const fileInput = document.getElementById('fileInput');
+    updateThemeUI();
 
-        function submitForm() {
-            if (fileInput.files.length > 0) {
-                form.submit();
-            }
+    const form = document.getElementById('uploadForm');
+    const fileInput = document.getElementById('fileInput');
+    const sizeError = document.getElementById('sizeError');
+    const sizeErrorText = document.getElementById('sizeErrorText');
+    const dropArea = document.getElementById('dropArea');
+
+    const MAX_SIZE = 99 * 1024 * 1024;
+
+    function formatSize(bytes) {
+        if (bytes >= 1024 * 1024 * 1024) return (bytes / 1024 / 1024 / 1024).toFixed(2) + ' GB';
+        if (bytes >= 1024 * 1024) return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+        if (bytes >= 1024) return (bytes / 1024).toFixed(1) + ' KB';
+        return bytes + ' Б';
+    }
+
+    function showSizeError(file) {
+        sizeErrorText.textContent = `Size of «${file.name}» is ${formatSize(file.size)}. Maximum size: ${MAX_SIZE / 1024 / 1024} MB.`;
+        sizeError.classList.remove('show');
+        void sizeError.offsetWidth;
+        sizeError.classList.add('show');
+        sizeError.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function clearSizeError() {
+        sizeError.classList.remove('show');
+        sizeErrorText.textContent = '';
+    }
+
+    function submitForm() {
+        if (fileInput.files.length === 0) return;
+
+        const file = fileInput.files[0];
+
+        if (file.size > MAX_SIZE) {
+            showSizeError(file);
+            fileInput.value = '';
+            document.querySelector('#dropArea h5').textContent = 'Drag & drop files here';
+            return;
         }
 
-        fileInput.addEventListener('change', function(e) {
-            if (e.target.files.length > 0) {
-                document.querySelector('#dropArea h5').textContent = e.target.files[0].name;
-                submitForm();
-            }
-        });
+        clearSizeError();
+        form.submit();
+    }
 
-        const dropArea = document.getElementById('dropArea');
-        dropArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropArea.style.borderColor = '#0d6efd';
-            dropArea.style.backgroundColor = 'rgba(13, 110, 253, 0.1)';
-        });
-        dropArea.addEventListener('dragleave', () => {
-            dropArea.style.borderColor = '#ced4da';
-            dropArea.style.backgroundColor = '';
-        });
-        dropArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropArea.style.borderColor = '#ced4da';
-            dropArea.style.backgroundColor = '';
-            if (e.dataTransfer.files.length) {
-                fileInput.files = e.dataTransfer.files;
-                document.querySelector('#dropArea h5').textContent = e.dataTransfer.files[0].name;
-                submitForm();
-            }
-        });
-
-        document.addEventListener('paste', function(e) {
-            const items = (e.clipboardData || window.clipboardData).items;
-            let file = null;
-            for (let i = 0; i < items.length; i++) {
-                if (items[i].kind === 'file') {
-                    file = items[i].getAsFile();
-                    break;
-                }
-            }
-            if (file) {
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(file);
-                fileInput.files = dataTransfer.files;
-                document.querySelector('#dropArea h5').textContent = file.name;
-                submitForm();
-            }
-        });
-
-        document.getElementById('navBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            document.body.classList.add('slide-out-left');
-            setTimeout(() => {
-                window.location.href = 'https://temp.mare.by';
-            }, 600);
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            document.body.classList.remove('slide-out-left');
-        });
-        window.addEventListener('pageshow', function() {
-            document.body.classList.remove('slide-out-left');
-        });
-
-        const logo = document.getElementById('logoImage');
-        if (logo) {
-            logo.addEventListener('click', function() {
-                const sounds = [
-                    "{{ url_for('static', filename='mlp-squee1.mp3') }}",
-                    "{{ url_for('static', filename='mlp-squee2.mp3') }}"
-                ];
-                const randomIndex = Math.floor(Math.random() * sounds.length);
-                const audio = new Audio(sounds[randomIndex]);
-                audio.play().catch(e => console.warn('Audio play failed:', e));
-            });
+    fileInput.addEventListener('change', function(e) {
+        if (e.target.files.length > 0) {
+            document.querySelector('#dropArea h5').textContent = e.target.files[0].name;
+            submitForm();
         }
-    </script>
+    });
+
+    dropArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropArea.style.borderColor = '#0d6efd';
+        dropArea.style.backgroundColor = 'rgba(13, 110, 253, 0.1)';
+    });
+    dropArea.addEventListener('dragleave', () => {
+        dropArea.style.borderColor = '#ced4da';
+        dropArea.style.backgroundColor = '';
+    });
+    dropArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropArea.style.borderColor = '#ced4da';
+        dropArea.style.backgroundColor = '';
+        if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            document.querySelector('#dropArea h5').textContent = e.dataTransfer.files[0].name;
+            submitForm();
+        }
+    });
+
+    document.addEventListener('paste', function(e) {
+        const items = (e.clipboardData || window.clipboardData).items;
+        let file = null;
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].kind === 'file') {
+                file = items[i].getAsFile();
+                break;
+            }
+        }
+        if (file) {
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            fileInput.files = dataTransfer.files;
+            document.querySelector('#dropArea h5').textContent = file.name;
+            submitForm();
+        }
+    });
+
+    document.getElementById('navBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.body.classList.add('slide-out-left');
+        setTimeout(() => {
+            window.location.href = 'https://temp.mare.by';
+        }, 600);
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.classList.remove('slide-out-left');
+    });
+    window.addEventListener('pageshow', function() {
+        document.body.classList.remove('slide-out-left');
+    });
+
+    const logo = document.getElementById('logoImage');
+    if (logo) {
+        logo.addEventListener('click', function() {
+            const sounds = [
+                "{{ url_for('static', filename='mlp-squee1.mp3') }}",
+                "{{ url_for('static', filename='mlp-squee2.mp3') }}"
+            ];
+            const randomIndex = Math.floor(Math.random() * sounds.length);
+            const audio = new Audio(sounds[randomIndex]);
+            audio.play().catch(e => console.warn('Audio play failed:', e));
+        });
+    }
+</script>
 </body>
 </html>
