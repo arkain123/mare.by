@@ -13,7 +13,7 @@ from config import (
 )
 from file_utils import delete_uploaded_file
 from ip_utils import append_ip_to_file, read_ip_file, remove_ip_from_file
-
+from ip_lookup import format_ip_origin
 
 # ---------- Low-level Telegram API ----------
 def tg_api(method, data=None):
@@ -90,13 +90,17 @@ def send_telegram_notification(filename, original_filename, file_size, file_url,
         user_ip_esc = escape_markdown(user_ip)
         file_url_esc = escape_markdown(file_url)
 
+        ip_origin = format_ip_origin(user_ip)
+        origin_line = f"\n🔹 *IP origin:* `{ip_origin}`" if ip_origin else ""
+
         message = (
             f"📁 *New file uploaded*\n"
             f"🔹 *Source:* {source.upper()}\n"
             f"🔹 *ID:* `{filename_esc}`\n"
             f"🔹 *Original:* {original_filename_esc}\n"
             f"🔹 *Size:* {file_size / 1024:.2f} KB\n"
-            f"🔹 *User IP:* `{user_ip_esc}`\n"
+            f"🔹 *User IP:* `{user_ip_esc}`"
+            f"{origin_line}\n"
             f"🔹 *URL:* {file_url_esc}\n"
             f"🕒 *Time:* {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
         )
@@ -108,7 +112,7 @@ def send_telegram_notification(filename, original_filename, file_size, file_url,
             )
 
         reply_markup = build_notification_markup(filename, user_ip, escalated)
-        
+
         url = f"https://api.telegram.org/bot{TG_BOT_TOKEN}/sendMessage"
         try:
             print(f"[TG] Sending notification: {message[:120]}...")
@@ -124,7 +128,6 @@ def send_telegram_notification(filename, original_filename, file_size, file_url,
             print(f"[TG] send error: {e}")
 
     threading.Thread(target=_send, daemon=True).start()
-
 
 HELP_TEXT = (
     "*Commands:*\n"
