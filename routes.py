@@ -13,7 +13,7 @@ from flask import (
 )
 
 from config import BASE_URL, MIRRORS, TG_WEBHOOK_SECRET
-from file_utils import generate_short_id, is_allowed_file
+from file_utils import generate_short_id, is_allowed_file, get_storage_stats
 from ip_utils import is_ip_in_list, load_banned_ips, load_escalated_ips
 from telegram_bot import (
     handle_telegram_callback,
@@ -103,6 +103,7 @@ def block_banned_ips():
 # ---------- Routes ----------
 @bp.route("/", methods=["GET", "POST"])
 def upload_file():
+    storage_stats = get_storage_stats()
     if request.method == "POST":
         if "file" not in request.files:
             return "Choose a file!", 400
@@ -117,7 +118,7 @@ def upload_file():
         _, file_url, _ = _handle_upload(file, source='web')
         return render_template("success.html", file_url=file_url)
 
-    return render_template("upload.html", mirrors=MIRRORS)
+    return render_template("upload.html", mirrors=MIRRORS, storage_stats=storage_stats)
 
 
 @bp.route("/api/upload", methods=["POST"])

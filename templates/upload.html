@@ -318,6 +318,100 @@
             60% { transform: translateX(-5px); }
             80% { transform: translateX(5px); }
         }
+
+	.storage-stats {
+	    max-width: 600px;
+	    margin: 24px auto 0;
+	    padding: 24px 30px;
+	    border-radius: 10px;
+	    background-color: #f8f9fa;
+	    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	    display: flex;
+	    justify-content: center;
+	    align-items: center;
+	    gap: 40px;
+	    text-align: center;
+	}
+	
+	.storage-stat-item {
+	    display: flex;
+	    flex-direction: column;
+	    align-items: center;
+	    gap: 4px;
+	    min-width: 100px;
+	}
+	
+	.storage-stat-value {
+	    font-size: 1.5rem;
+	    font-weight: 700;
+	    color: #0d6efd;
+	    display: flex;
+	    align-items: center;
+	    gap: 8px;
+	    line-height: 1.2;
+	}
+	
+	.storage-stat-value i {
+	    font-size: 1.25rem;
+	    opacity: 0.85;
+	}
+	
+	.storage-stat-label {
+	    font-size: 0.8rem;
+	    text-transform: uppercase;
+	    letter-spacing: 0.06em;
+	    color: #6c757d;
+	    font-weight: 500;
+	}
+	
+	html.dark .storage-stats {
+	    background-color: #1e1e1e;
+	    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+	}
+
+	html.dark .storage-stat-value {
+	    color: #90caf9;
+	}
+	
+	html.dark .storage-stat-label {
+	    color: #aaa;
+	}
+
+	.storage-stat-item + .storage-stat-item {
+	    position: relative;
+	    padding-left: 40px;
+	}
+	
+	.storage-stat-item + .storage-stat-item::before {
+	    content: '';
+	    position: absolute;
+	    left: 0;
+	    top: 50%;
+	    transform: translateY(-50%);
+	    height: 40px;
+	    width: 1px;
+	    background-color: rgba(0, 0, 0, 0.1);
+	}
+	
+	html.dark .storage-stat-item + .storage-stat-item::before {
+	    background-color: rgba(255, 255, 255, 0.15);
+	}
+
+	@media (max-width: 576px) {
+	    .storage-stats {
+	        padding: 20px;
+	        gap: 20px;
+	    }
+	    .storage-stat-item + .storage-stat-item {
+	        padding-left: 20px;
+	    }
+	    .storage-stat-value {
+	        font-size: 1.25rem;
+	    }
+	    .storage-stat-label {
+	        font-size: 0.7rem;
+	    }
+	}
     </style>
 </head>
 <body>
@@ -364,6 +458,21 @@
                 </div>
             </div>
         </div>
+
+	{% if storage_stats %}
+	<div class="storage-stats">
+	    <div class="storage-stat-item">
+	        <div class="storage-stat-value">
+	            <i class="bi bi-file-text"></i> {{ storage_stats.files_count }}
+	        </div>
+	        <div class="storage-stat-label">Files</div>
+	    </div>
+	    <div class="storage-stat-item">
+	        <div class="storage-stat-value">{{ storage_stats.total_size_formatted }}</div>
+	        <div class="storage-stat-label">Total Size</div>
+	    </div>
+	</div>
+	{% endif %}
 
         {% include 'shared/_features.html' %}
     </div>
