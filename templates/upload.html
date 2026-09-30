@@ -22,6 +22,7 @@
         body {
             background-color: #ffffff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.25s ease, color 0.25s ease;
         }
         .logo {
             font-size: 2.5rem;
@@ -37,6 +38,7 @@
         .tagline {
             color: #6c757d;
             margin-bottom: 20px;
+            transition: color 0.25s ease;
         }
         .upload-container {
             max-width: 600px;
@@ -45,6 +47,7 @@
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             background-color: #f8f9fa;
+            transition: background-color 0.25s ease, box-shadow 0.25s ease;
         }
         .upload-icon {
             font-size: 3rem;
@@ -58,6 +61,10 @@
             text-align: center;
             margin-bottom: 20px;
             cursor: pointer;
+            background-color: #f8f9fa;
+            transition: background-color 0.25s ease,
+                        border-color 0.25s ease,
+                        color 0.25s ease;
         }
         .file-input-area:hover {
             border-color: #0d6efd;
@@ -92,6 +99,12 @@
             color: #fff;
         }
 
+        .btn-outline-primary {
+            transition: background-color 0.25s ease,
+                        color 0.25s ease,
+                        border-color 0.25s ease;
+        }
+
         .theme-toggle {
             position: fixed;
             top: 20px;
@@ -106,7 +119,7 @@
             justify-content: center;
             backdrop-filter: blur(4px);
             z-index: 1000;
-            transition: 0.1s;
+            transition: transform 0.1s, background-color 0.25s ease;
             border: none;
         }
         html.dark .theme-toggle {
@@ -136,7 +149,9 @@
             justify-content: center;
             backdrop-filter: blur(4px);
             z-index: 1000;
-            transition: 0.1s;
+            transition: transform 0.1s,
+                        background-color 0.25s ease,
+                        color 0.25s ease;
             border: none;
             text-decoration: none;
             color: #0b1a2e;
@@ -154,11 +169,15 @@
             background: rgba(255,255,255,0.3);
         }
 
+        /* === Элементы из _shared.html — плавная смена темы === */
         .info-bubble .badge {
             background-color: rgba(0,0,0,0.05);
             color: #555;
             font-weight: normal;
             backdrop-filter: blur(4px);
+            transition: background-color 0.25s ease,
+                        color 0.25s ease,
+                        border-color 0.25s ease;
         }
         html.dark .info-bubble .badge {
             background-color: rgba(255,255,255,0.1);
@@ -167,14 +186,20 @@
         .info-bubble {
             font-size: 0.85rem;
         }
+        .info-bubble small {
+            transition: color 0.25s ease;
+        }
         .text-muted {
             --bs-text-opacity: 1;
             color: rgba(150, 156, 162, 0.75) !important;
+            transition: color 0.25s ease;
         }
         .badge-clickable {
             text-decoration: none;
             color: inherit;
-            transition: 0.2s;
+            transition: transform 0.2s ease,
+                        background-color 0.25s ease,
+                        color 0.25s ease;
         }
         .badge-clickable:hover {
             background-color: rgba(13,110,253,0.2) !important;
@@ -184,7 +209,9 @@
         }
         .badge-download {
             text-decoration: none;
-            transition: 0.2s;
+            transition: transform 0.2s ease,
+                        background-color 0.25s ease,
+                        color 0.25s ease;
         }
         .badge-download:hover {
             transform: scale(1.05);
@@ -198,8 +225,16 @@
             animation: slideOutLeft 0.6s ease-in forwards;
         }
         @keyframes slideOutLeft {
-            0% { transform: translateX(0); opacity: 1; }
+            0%   { transform: translateX(0);      opacity: 1; }
             100% { transform: translateX(-100vw); opacity: 0; }
+        }
+
+        .nav-btn.slide-out-left {
+            animation: slideOutLeftNav 0.6s ease-in forwards;
+        }
+        @keyframes slideOutLeftNav {
+            0%   { transform: translateY(-50%) translateX(0);      opacity: 1; }
+            100% { transform: translateY(-50%) translateX(-100vw); opacity: 0; }
         }
 
         .nav-btn {
@@ -221,7 +256,9 @@
             line-height: 1;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(13, 110, 253, 0.4);
-            transition: 0.2s;
+            transition: transform 0.2s,
+                        background-color 0.25s ease,
+                        box-shadow 0.25s ease;
             text-decoration: none;
         }
         .nav-btn:hover {
@@ -280,6 +317,10 @@
             gap: 12px;
             box-shadow: 0 2px 8px rgba(220, 53, 69, 0.15);
             animation: shakeError 0.4s ease-in-out;
+            transition: background-color 0.25s ease,
+                        color 0.25s ease,
+                        border-color 0.25s ease,
+                        box-shadow 0.25s ease;
         }
         .size-error.show {
             display: flex;
@@ -319,99 +360,124 @@
             80% { transform: translateX(5px); }
         }
 
-	.storage-stats {
-	    max-width: 600px;
-	    margin: 24px auto 0;
-	    padding: 24px 30px;
-	    border-radius: 10px;
-	    background-color: #f8f9fa;
-	    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-	    display: flex;
-	    justify-content: center;
-	    align-items: center;
-	    gap: 40px;
-	    text-align: center;
-	}
-	
-	.storage-stat-item {
-	    display: flex;
-	    flex-direction: column;
-	    align-items: center;
-	    gap: 4px;
-	    min-width: 100px;
-	}
-	
-	.storage-stat-value {
-	    font-size: 1.5rem;
-	    font-weight: 700;
-	    color: #0d6efd;
-	    display: flex;
-	    align-items: center;
-	    gap: 8px;
-	    line-height: 1.2;
-	}
-	
-	.storage-stat-value i {
-	    font-size: 1.25rem;
-	    opacity: 0.85;
-	}
-	
-	.storage-stat-label {
-	    font-size: 0.8rem;
-	    text-transform: uppercase;
-	    letter-spacing: 0.06em;
-	    color: #6c757d;
-	    font-weight: 500;
-	}
-	
-	html.dark .storage-stats {
-	    background-color: #1e1e1e;
-	    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-	}
+        .storage-stats {
+            max-width: 600px;
+            margin: 24px auto 0;
+            padding: 24px 30px;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            text-align: center;
+            transition: background-color 0.25s ease, box-shadow 0.25s ease;
+        }
+        
+        .storage-stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            min-width: 100px;
+        }
+        
+        .storage-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0d6efd;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            line-height: 1.2;
+            transition: color 0.25s ease;
+        }
+        
+        .storage-stat-value i {
+            font-size: 1.25rem;
+            opacity: 0.85;
+        }
+        
+        .storage-stat-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #6c757d;
+            font-weight: 500;
+            transition: color 0.25s ease;
+        }
+        
+        html.dark .storage-stats {
+            background-color: #1e1e1e;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
 
-	html.dark .storage-stat-value {
-	    color: #90caf9;
-	}
-	
-	html.dark .storage-stat-label {
-	    color: #aaa;
-	}
+        html.dark .storage-stat-value {
+            color: #90caf9;
+        }
+        
+        html.dark .storage-stat-label {
+            color: #aaa;
+        }
 
-	.storage-stat-item + .storage-stat-item {
-	    position: relative;
-	    padding-left: 40px;
-	}
-	
-	.storage-stat-item + .storage-stat-item::before {
-	    content: '';
-	    position: absolute;
-	    left: 0;
-	    top: 50%;
-	    transform: translateY(-50%);
-	    height: 40px;
-	    width: 1px;
-	    background-color: rgba(0, 0, 0, 0.1);
-	}
-	
-	html.dark .storage-stat-item + .storage-stat-item::before {
-	    background-color: rgba(255, 255, 255, 0.15);
-	}
+        .storage-stat-item + .storage-stat-item {
+            position: relative;
+            padding-left: 40px;
+        }
+        
+        .storage-stat-item + .storage-stat-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 40px;
+            width: 1px;
+            background-color: rgba(0, 0, 0, 0.1);
+            transition: background-color 0.25s ease;
+        }
+        
+        html.dark .storage-stat-item + .storage-stat-item::before {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
 
-	@media (max-width: 576px) {
-	    .storage-stats {
-	        padding: 20px;
-	        gap: 20px;
-	    }
-	    .storage-stat-item + .storage-stat-item {
-	        padding-left: 20px;
-	    }
-	    .storage-stat-value {
-	        font-size: 1.25rem;
-	    }
-	    .storage-stat-label {
-	        font-size: 0.7rem;
-	    }
-	}
+        @media (max-width: 576px) {
+            .storage-stats {
+                padding: 20px;
+                gap: 20px;
+            }
+            .storage-stat-item + .storage-stat-item {
+                padding-left: 20px;
+            }
+            .storage-stat-value {
+                font-size: 1.25rem;
+            }
+            .storage-stat-label {
+                font-size: 0.7rem;
+            }
+        }
+
+        .corner-image {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            z-index: 998;
+            pointer-events: none;
+            line-height: 0;
+            width: clamp(180px, 32vmin, 520px);
+        }
+        .corner-image img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        @media (max-width: 576px) {
+            .corner-image {
+                width: clamp(120px, 40vmin, 220px);
+            }
+        }
     </style>
 </head>
 <body>
@@ -459,22 +525,27 @@
             </div>
         </div>
 
-	{% if storage_stats %}
-	<div class="storage-stats">
-	    <div class="storage-stat-item">
-	        <div class="storage-stat-value">
-	            <i class="bi bi-file-text"></i> {{ storage_stats.files_count }}
-	        </div>
-	        <div class="storage-stat-label">Files</div>
-	    </div>
-	    <div class="storage-stat-item">
-	        <div class="storage-stat-value">{{ storage_stats.total_size_formatted }}</div>
-	        <div class="storage-stat-label">Total Size</div>
-	    </div>
-	</div>
-	{% endif %}
+
+        {% if storage_stats %}
+        <div class="storage-stats">
+            <div class="storage-stat-item">
+                <div class="storage-stat-value">
+                    <i class="bi bi-file-text"></i> {{ storage_stats.files_count }}
+                </div>
+                <div class="storage-stat-label">Files</div>
+            </div>
+            <div class="storage-stat-item">
+                <div class="storage-stat-value">{{ storage_stats.total_size_formatted }}</div>
+                <div class="storage-stat-label">Total Size</div>
+            </div>
+        </div>
+        {% endif %}
 
         {% include 'shared/_features.html' %}
+    </div>
+
+    <div class="corner-image">
+        <img src="https://mare.by/QVAXnpvT.png" alt="Thanks!">
     </div>
 
 <script>
@@ -508,7 +579,7 @@
         if (bytes >= 1024 * 1024 * 1024) return (bytes / 1024 / 1024 / 1024).toFixed(2) + ' GB';
         if (bytes >= 1024 * 1024) return (bytes / 1024 / 1024).toFixed(1) + ' MB';
         if (bytes >= 1024) return (bytes / 1024).toFixed(1) + ' KB';
-        return bytes + ' Б';
+        return bytes + ' B';
     }
 
     function showSizeError(file) {
@@ -587,18 +658,32 @@
 
     document.getElementById('navBtn').addEventListener('click', function(e) {
         e.preventDefault();
-        document.body.classList.add('slide-out-left');
+
+        const elementsToSlide = [
+            document.getElementById('mainContent'),
+            document.querySelector('.faq-btn'),
+            document.getElementById('themeToggle'),
+            document.getElementById('navBtn'),
+            document.querySelector('.corner-image')
+        ];
+
+        elementsToSlide.forEach(el => {
+            if (el) el.classList.add('slide-out-left');
+        });
+
         setTimeout(() => {
             window.location.href = 'https://temp.mare.by';
         }, 600);
     });
 
-    document.addEventListener('DOMContentLoaded', function() {
-        document.body.classList.remove('slide-out-left');
-    });
-    window.addEventListener('pageshow', function() {
-        document.body.classList.remove('slide-out-left');
-    });
+    function resetSlide() {
+        document.querySelectorAll('.slide-out-left').forEach(el => {
+            el.classList.remove('slide-out-left');
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', resetSlide);
+    window.addEventListener('pageshow', resetSlide);
 
     const logo = document.getElementById('logoImage');
     if (logo) {
