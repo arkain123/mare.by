@@ -33,3 +33,38 @@ def delete_uploaded_file(filename):
         return True, "File deleted"
     except OSError as e:
         return False, f"Deleting error: {e}"
+
+
+def get_storage_stats():
+    """Get statistics about uploaded files"""
+    if not os.path.isdir(UPLOAD_FOLDER):
+        return {"files_count": 0, "total_size": 0, "total_size_formatted": "0 B"}
+    
+    files_count = 0
+    total_size = 0
+    
+    try:
+        for filename in os.listdir(UPLOAD_FOLDER):
+            filepath = os.path.join(UPLOAD_FOLDER, filename)
+            if os.path.isfile(filepath):
+                files_count += 1
+                total_size += os.path.getsize(filepath)
+    except OSError:
+        pass
+    
+    return {
+        "files_count": files_count,
+        "total_size": total_size,
+        "total_size_formatted": format_size(total_size)
+    }
+
+
+def format_size(bytes_size):
+    """Format bytes to human readable format"""
+    if bytes_size >= 1024 * 1024 * 1024:
+        return f"{bytes_size / 1024 / 1024 / 1024:.2f} GB"
+    if bytes_size >= 1024 * 1024:
+        return f"{bytes_size / 1024 / 1024:.1f} MB"
+    if bytes_size >= 1024:
+        return f"{bytes_size / 1024:.1f} KB"
+    return f"{bytes_size} B"
